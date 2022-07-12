@@ -98,9 +98,9 @@ export function SupportMissionBullet() {
       <CheckmarkBullet />
       <FormattedMessage
         id="learning.generic.upsell.supportMissionBullet"
-        defaultMessage="Support our {missionInBoldText} at {siteName}"
+        defaultMessage="Support our {missionInBoldText} at edX"
         description="Bullet encouraging user to support edX's goals."
-        values={{ missionInBoldText, siteName: getConfig().SITE_NAME }}
+        values={{ missionInBoldText }}
       />
     </li>
   );

@@ -92,7 +92,11 @@ class MasqueradeWidget extends Component {
         userNameInputToggle={(...args) => this.toggle(...args)}
         onSubmit={(payload) => this.onSubmit(payload)}
       />
-    ));
+    ));{urlStudio && (
+      <span className="mx-1 my-1">
+        <a className="btn btn-inverse-outline-primary" href={urlStudio}>Studio</a>
+      </span>
+    )}
     if (active.userName) {
       this.setState({
         autoFocus: false,
@@ -120,15 +124,15 @@ class MasqueradeWidget extends Component {
     return (
       <div className="flex-grow-1">
         <div className="row">
-          <span className="col-auto col-form-label pl-3">View this course as:</span>
-          <Dropdown className="flex-shrink-1 mx-1">
+         {/* <span className="col-auto col-form-label pl-3">View this course as:</span> */}
+          {/* <Dropdown className="flex-shrink-1 mx-1">
             <Dropdown.Toggle variant="inverse-outline-primary">
               {masquerade}
             </Dropdown.Toggle>
             <Dropdown.Menu>
               {options}
             </Dropdown.Menu>
-          </Dropdown>
+          </Dropdown> */}
         </div>
         {shouldShowUserNameInput && (
           <div className="row mt-2">

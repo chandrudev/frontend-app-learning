@@ -10,10 +10,15 @@ import { LearningHeader as Header } from '@edx/frontend-component-header';
 import PageLoading from '../generic/PageLoading';
 import { getAccessDeniedRedirectUrl } from '../shared/access';
 import { useModel } from '../generic/model-store';
-
+import './Tabpage.scss';
 import genericMessages from '../generic/messages';
+import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import messages from './messages';
 import LoadedTabPage from './LoadedTabPage';
+import logo from './images/logo.svg';
+import icon_coin_back from './images/icon_coin_back.svg';
+import icon from './images/icon.svg';
+
 import { setCallToActionToast } from '../course-home/data/slice';
 import LaunchCourseHomeTourButton from '../product-tours/newUserCourseHomeTour/LaunchCourseHomeTourButton';
 
@@ -23,6 +28,7 @@ function TabPage({ intl, ...props }) {
     courseId,
     courseStatus,
     metadataModel,
+    unitId,
   } = props;
   const {
     toastBodyLink,
@@ -31,6 +37,7 @@ function TabPage({ intl, ...props }) {
   } = useSelector(state => state.courseHome);
   const dispatch = useDispatch();
   const {
+    canLoadCourseware,
     courseAccess,
     number,
     org,
@@ -45,13 +52,15 @@ function TabPage({ intl, ...props }) {
         <PageLoading
           srMessage={intl.formatMessage(messages.loading)}
         />
-        <Footer />
+        {/* <Footer /> */}
       </>
     );
   }
 
   if (courseStatus === 'denied') {
-    const redirectUrl = getAccessDeniedRedirectUrl(courseId, activeTabSlug, courseAccess, start);
+    const redirectUrl = getAccessDeniedRedirectUrl(
+      courseId, activeTabSlug, canLoadCourseware, courseAccess, start, unitId,
+    );
     if (redirectUrl) {
       return (<Redirect to={redirectUrl} />);
     }
@@ -74,13 +83,24 @@ function TabPage({ intl, ...props }) {
           {toastHeader}
         </Toast>
         {metadataModel === 'courseHomeMeta' && (<LaunchCourseHomeTourButton srOnly />)}
-        <Header
-          courseOrg={org}
-          courseNumber={number}
-          courseTitle={title}
-        />
-        <LoadedTabPage {...props} />
-        <Footer />
+        {/* <Header /> */}
+        <div className="header">
+          <img src={logo} style={{width: 135}} />
+          <div className="menu-list">
+            <ul  className= "menu">
+              <li><a href={`${getConfig().LMS_BASE_URL}/dashboard`} style={{color: 'black'}}>Dashboard</a></li>
+            <li><a>Learn</a></li>
+            <li><a>Coding Lab</a></li>
+          </ul>
+          <ul className='right-menu'>
+            <li><img src={icon_coin_back} /> <span>3</span> </li>
+            <li><img src={icon} /> <span>1</span> </li>
+            <li><img src="profile.svg" /></li>
+          </ul>
+        </div>
+        </div>
+      <LoadedTabPage {...props} />
+        {/* <Footer /> */}
       </>
     );
   }
@@ -92,7 +112,7 @@ function TabPage({ intl, ...props }) {
       <p className="text-center py-5 mx-auto" style={{ maxWidth: '30em' }}>
         {intl.formatMessage(messages.failure)}
       </p>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

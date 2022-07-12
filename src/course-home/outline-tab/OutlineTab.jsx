@@ -27,6 +27,7 @@ import { useModel } from '../../generic/model-store';
 import WelcomeMessage from './widgets/WelcomeMessage';
 import ProctoringInfoPanel from './widgets/ProctoringInfoPanel';
 import AccountActivationAlert from '../../alerts/logistration-alert/AccountActivationAlert';
+import './outlinetab.css'
 
 /** [MM-P2P] Experiment */
 import { initHomeMMP2P, MMP2PFlyover } from '../../experiments/mm-p2p';
@@ -105,29 +106,29 @@ function OutlineTab({ intl }) {
 
   /** [[MM-P2P] Experiment */
   const MMP2P = initHomeMMP2P(courseId);
-
+  // debugger
   /** show post enrolment survey to only B2C learners */
   const learnerType = isEnterpriseUser() ? 'enterprise_learner' : 'b2c_learner';
 
   return (
     <>
-      <div data-learner-type={learnerType} className="row w-100 mx-0 my-3 justify-content-between">
-        <div className="col-12 col-sm-auto p-0">
-          <div role="heading" aria-level="1" className="h2">{title}</div>
+      <div data-learner-type={learnerType} className="">
+        <div className="banner">
+          <h2 className="h2">{title}</h2>
         </div>
       </div>
       {/** [MM-P2P] Experiment (className for optimizely trigger) */}
       <div className="row course-outline-tab">
         <AccountActivationAlert />
-        <div className="col-12">
+        {/* <div className="col-12">
           <AlertList
             topic="outline-private-alerts"
             customAlerts={{
               ...privateCourseAlert,
             }}
           />
-        </div>
-        <div className="col col-12 col-md-8">
+        </div> */}
+        <div className="col col-12 col-md-8 mx-auto">
           { /** [MM-P2P] Experiment (the conditional) */ }
           { !MMP2P.state.isEnabled
             && (
@@ -142,74 +143,42 @@ function OutlineTab({ intl }) {
               }}
             />
             )}
-          {isSelfPaced && hasDeadlines && !MMP2P.state.isEnabled && (
+          {/* {isSelfPaced && hasDeadlines && !MMP2P.state.isEnabled && (
             <>
               <ShiftDatesAlert model="outline" fetch={fetchOutlineTab} />
               <UpgradeToShiftDatesAlert model="outline" logUpgradeLinkClick={logUpgradeToShiftDatesLinkClick} />
             </>
-          )}
+          )} */}
           <StartOrResumeCourseCard />
           <WelcomeMessage courseId={courseId} />
           {rootCourseId && (
             <>
               <div className="row w-100 m-0 mb-3 justify-content-end">
-                <div className="col-12 col-md-auto p-0">
+                {/* <div className="col-12 col-md-auto p-0">
                   <Button variant="outline-primary" block onClick={() => { setExpandAll(!expandAll); }}>
                     {expandAll ? intl.formatMessage(messages.collapseAll) : intl.formatMessage(messages.expandAll)}
                   </Button>
-                </div>
+                </div> */}
               </div>
               <ol id="courseHome-outline" className="list-unstyled">
-                {courses[rootCourseId].sectionIds.map((sectionId) => (
+                {courses[rootCourseId].sectionIds.map((sectionId, idx) => {
+                  let lockSection;
+                  if(idx > 1) lockSection = true
+                  return(
                   <Section
                     key={sectionId}
                     courseId={courseId}
                     defaultOpen={sections[sectionId].resumeBlock}
                     expand={expandAll}
                     section={sections[sectionId]}
+                    // lockSection = {lockSection}
                   />
-                ))}
+                )})}
               </ol>
             </>
           )}
         </div>
-        {rootCourseId && (
-          <div className="col col-12 col-md-4">
-            <ProctoringInfoPanel />
-            { /** Defer showing the goal widget until the ProctoringInfoPanel has resolved or has been determined as
-             disabled to avoid components bouncing around too much as screen is rendered */ }
-            {(!enableProctoredExams || proctoringPanelStatus === 'loaded') && weeklyLearningGoalEnabled && (
-              <WeeklyLearningGoalCard
-                daysPerWeek={selectedGoal && 'daysPerWeek' in selectedGoal ? selectedGoal.daysPerWeek : null}
-                subscribedToReminders={selectedGoal && 'subscribedToReminders' in selectedGoal ? selectedGoal.subscribedToReminders : false}
-              />
-            )}
-            <CourseTools />
-            { /** [MM-P2P] Experiment (conditional) */ }
-            { MMP2P.state.isEnabled
-              ? <MMP2PFlyover isStatic options={MMP2P} />
-              : (
-                <UpgradeNotification
-                  offer={offer}
-                  verifiedMode={verifiedMode}
-                  accessExpiration={accessExpiration}
-                  contentTypeGatingEnabled={datesBannerInfo.contentTypeGatingEnabled}
-                  marketingUrl={marketingUrl}
-                  upsellPageName="course_home"
-                  userTimezone={userTimezone}
-                  shouldDisplayBorder
-                  timeOffsetMillis={timeOffsetMillis}
-                  courseId={courseId}
-                  org={org}
-                />
-              )}
-            <CourseDates
-              /** [MM-P2P] Experiment */
-              mmp2p={MMP2P}
-            />
-            <CourseHandouts />
-          </div>
-        )}
+
       </div>
     </>
   );
@@ -220,3 +189,48 @@ OutlineTab.propTypes = {
 };
 
 export default injectIntl(OutlineTab);
+
+
+
+
+
+
+
+
+        // {/* {rootCourseId && (
+        //   <div className="col col-12 col-md-4">
+        //     <ProctoringInfoPanel />
+        //     { /** Defer showing the goal widget until the ProctoringInfoPanel has resolved or has been determined as
+        //      disabled to avoid components bouncing around too much as screen is rendered */ }
+        //      {(!enableProctoredExams || proctoringPanelStatus === 'loaded') && weeklyLearningGoalEnabled && (
+        //       <WeeklyLearningGoalCard
+        //         daysPerWeek={selectedGoal && 'daysPerWeek' in selectedGoal ? selectedGoal.daysPerWeek : null}
+        //         subscribedToReminders={selectedGoal && 'subscribedToReminders' in selectedGoal ? selectedGoal.subscribedToReminders : false}
+        //       />
+        //     )}
+        //     <CourseTools />
+        //     { /** [MM-P2P] Experiment (conditional) */ }
+        //     { MMP2P.state.isEnabled
+        //       ? <MMP2PFlyover isStatic options={MMP2P} />
+        //       : (
+        //         <UpgradeNotification
+        //           offer={offer}
+        //           verifiedMode={verifiedMode}
+        //           accessExpiration={accessExpiration}
+        //           contentTypeGatingEnabled={datesBannerInfo.contentTypeGatingEnabled}
+        //           marketingUrl={marketingUrl}
+        //           upsellPageName="course_home"
+        //           userTimezone={userTimezone}
+        //           shouldDisplayBorder
+        //           timeOffsetMillis={timeOffsetMillis}
+        //           courseId={courseId}
+        //           org={org}
+        //         />
+        //       )}
+        //     <CourseDates
+        //       /** [MM-P2P] Experiment */
+        //       mmp2p={MMP2P}
+        //     />
+        //     <CourseHandouts />
+        //   </div>
+        // )}

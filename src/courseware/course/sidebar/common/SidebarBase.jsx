@@ -88,7 +88,7 @@ SidebarBase.propTypes = {
   title: PropTypes.string.isRequired,
   ariaLabel: PropTypes.string.isRequired,
   sidebarId: PropTypes.string.isRequired,
-  className: PropTypes.string,
+  className: PropTypes.string.isRequired,
   children: PropTypes.element.isRequired,
   showTitleBar: PropTypes.bool,
   width: PropTypes.string,
@@ -97,7 +97,6 @@ SidebarBase.propTypes = {
 SidebarBase.defaultProps = {
   width: '31rem',
   showTitleBar: true,
-  className: '',
 };
 
 export default injectIntl(SidebarBase);

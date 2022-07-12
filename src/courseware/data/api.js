@@ -10,58 +10,55 @@ export function normalizeLearningSequencesData(learningSequencesData) {
     sequences: {},
   };
 
-  const now = new Date();
-  function isReleased(block) {
-    // We check whether the backend marks this as accessible because staff users are granted access anyway.
-    // Note that sections don't have the `accessible` field and will just be checking `effective_start`.
-    return block.accessible || !block.effective_start || now >= Date.parse(block.effective_start);
-  }
-
   // Sequences
   Object.entries(learningSequencesData.outline.sequences).forEach(([seqId, sequence]) => {
-    if (!isReleased(sequence)) {
-      return; // Don't let the learner see unreleased sequences
+    if (!sequence.accessible) {
+      // Skipping inaccessible sequences replicates the behavior of the legacy course blocks API
+      return;
     }
 
     models.sequences[seqId] = {
       id: seqId,
       title: sequence.title,
+      legacyWebUrl: `${getConfig().LMS_BASE_URL}/courses/${learningSequencesData.course_key}/jump_to/${seqId}?experience=legacy`,
     };
   });
 
   // Sections
   learningSequencesData.outline.sections.forEach(section => {
-    // Filter out any ignored sequences (e.g. unreleased sequences)
-    const availableSequenceIds = section.sequence_ids.filter(seqId => seqId in models.sequences);
-
-    // If we are unreleased and already stripped out all our children, just don't show us at all.
-    // (We check both release date and children because children will exist for an unreleased section even for staff,
-    // so we still want to show this section.)
-    if (!isReleased(section) && availableSequenceIds.length === 0) {
+    // Skipping sections with only inaccessible sequences replicates the behavior of the legacy course blocks API
+    // (But keep it if it was already empty, again to replicate legacy blocks API.)
+    const accessibleSequenceIds = section.sequence_ids.filter(seqId => seqId in models.sequences);
+    if (section.sequence_ids.length > 0 && accessibleSequenceIds.length === 0) {
       return;
     }
 
     models.sections[section.id] = {
       id: section.id,
       title: section.title,
-      sequenceIds: availableSequenceIds,
+      sequenceIds: accessibleSequenceIds,
       courseId: learningSequencesData.course_key,
     };
 
     // Add back-references to this section for all child sequences.
-    availableSequenceIds.forEach(childSeqId => {
+    accessibleSequenceIds.forEach(childSeqId => {
       models.sequences[childSeqId].sectionId = section.id;
     });
   });
 
   // Course
+  const now = new Date();
   models.courses[learningSequencesData.course_key] = {
     id: learningSequencesData.course_key,
     title: learningSequencesData.title,
     sectionIds: Object.entries(models.sections).map(([sectionId]) => sectionId),
 
-    // Scan through all the sequences and look for ones that aren't released yet.
-    hasScheduledContent: Object.values(learningSequencesData.outline.sequences).some(seq => !isReleased(seq)),
+    // Scan through all the sequences and look for ones that aren't accessible
+    // to us yet because the start date has not yet passed. (Some may be
+    // inaccessible because the end_date has passed.)
+    hasScheduledContent: Object.values(learningSequencesData.outline.sequences).some(
+      seq => !seq.accessible && now < Date.parse(seq.effective_start),
+    ),
   };
 
   return models;
@@ -105,6 +102,7 @@ function normalizeMetadata(metadata) {
     start: data.start,
     enrollmentMode: data.enrollment.mode,
     isEnrolled: data.enrollment.is_active,
+    canViewLegacyCourseware: data.can_view_legacy_courseware,
     license: data.license,
     userTimezone: data.user_timezone,
     showCalculator: data.show_calculator,
@@ -120,6 +118,7 @@ function normalizeMetadata(metadata) {
     verificationStatus: data.verification_status,
     linkedinAddToProfileUrl: data.linkedin_add_to_profile_url,
     relatedPrograms: camelCaseObject(data.related_programs),
+    isIntegritySignatureEnabled: data.is_integrity_signature_enabled,
     userNeedsIntegritySignature: data.user_needs_integrity_signature,
     canAccessProctoredExams: data.can_access_proctored_exams,
   };

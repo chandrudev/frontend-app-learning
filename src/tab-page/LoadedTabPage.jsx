@@ -24,6 +24,7 @@ function LoadedTabPage({
 }) {
   const {
     celebrations,
+    canViewLegacyCourseware,
     org,
     originalUserIsStaff,
     tabs,
@@ -42,6 +43,8 @@ function LoadedTabPage({
   const streakDiscountCouponEnabled = celebrations && celebrations.streakDiscountEnabled && verifiedMode;
   const [isStreakCelebrationOpen,, closeStreakCelebration] = useToggle(streakLengthToCelebrate);
 
+  // console.log({enrollmentAlert});
+
   return (
     <>
       <ProductTours
@@ -57,6 +60,7 @@ function LoadedTabPage({
         <InstructorToolbar
           courseId={courseId}
           unitId={unitId}
+          canViewLegacyCourseware={canViewLegacyCourseware}
           tab={activeTabSlug}
         />
       )}

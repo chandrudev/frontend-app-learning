@@ -16,7 +16,7 @@ function DiscussionsSidebar({ intl }) {
     courseId,
   } = useContext(SidebarContext);
   const topic = useModel('discussionTopics', unitId);
-  if (!topic?.id) {
+  if (!topic) {
     return null;
   }
   const discussionsUrl = `${getConfig().DISCUSSIONS_MFE_BASE_URL}/${courseId}/topics/${topic.id}`;
@@ -31,6 +31,8 @@ function DiscussionsSidebar({ intl }) {
       <iframe
         src={`${discussionsUrl}?inContext`}
         className="d-flex w-100 border-0"
+        // Need to set minHeight so there is enough space for the add post UI
+        // TODO: Use postMessage API to dynamically update iframe size.
         style={{ minHeight: '60rem' }}
         title={intl.formatMessage(messages.discussionsTitle)}
       />

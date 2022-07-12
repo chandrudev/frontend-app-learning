@@ -31,9 +31,6 @@ describe('Progress Tab', () => {
   courseMetadataUrl = appendBrowserTimezoneToUrl(courseMetadataUrl);
   const progressUrl = new RegExp(`${getConfig().LMS_BASE_URL}/api/course_home/progress/*`);
   const masqueradeUrl = `${getConfig().LMS_BASE_URL}/courses/${courseId}/masquerade`;
-  const now = new Date();
-  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-  const overmorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2);
 
   function setMetadata(attributes, options) {
     const courseMetadata = Factory.build('courseHomeMetadata', attributes, options);
@@ -959,6 +956,49 @@ describe('Progress Tab', () => {
         });
       });
 
+      it('Displays download link', async () => {
+        setTabData({
+          certificate_data: {
+            cert_status: 'downloadable',
+            download_url: 'fake.download.url',
+          },
+          user_has_passing_grade: true,
+        });
+        await fetchAndRender();
+        expect(screen.getByRole('link', { name: 'Download my certificate' })).toBeInTheDocument();
+      });
+
+      it('sends events on view of progress tab and on click of downloadable certificate link', async () => {
+        setTabData({
+          certificate_data: {
+            cert_status: 'downloadable',
+            download_url: 'fake.download.url',
+          },
+          user_has_passing_grade: true,
+        });
+        await fetchAndRender();
+        expect(sendTrackEvent).toHaveBeenCalledTimes(1);
+        expect(sendTrackEvent).toHaveBeenCalledWith('edx.ui.lms.course_progress.visited', {
+          org_key: 'edX',
+          courserun_key: courseId,
+          is_staff: false,
+          track_variant: 'audit',
+          grade_variant: 'passing',
+          certificate_status_variant: 'earned_downloadable',
+        });
+
+        const downloadCertificateLink = screen.getByRole('link', { name: 'Download my certificate' });
+        fireEvent.click(downloadCertificateLink);
+
+        expect(sendTrackEvent).toHaveBeenCalledTimes(2);
+        expect(sendTrackEvent).toHaveBeenNthCalledWith(2, 'edx.ui.lms.course_progress.certificate_status.clicked', {
+          org_key: 'edX',
+          courserun_key: courseId,
+          is_staff: false,
+          certificate_status_variant: 'earned_downloadable',
+        });
+      });
+
       it('Displays webview link', async () => {
         setTabData({
           certificate_data: {
@@ -1179,65 +1219,6 @@ describe('Progress Tab', () => {
     it('Does not display the certificate component if the user is not enrolled', async () => {
       await fetchAndRender();
       expect(screen.queryByTestId('certificate-status-component')).not.toBeInTheDocument();
-    });
-
-    it('Shows not available messaging before certificates are available to nonpassing learners when theres no certificate data', async () => {
-      setMetadata({
-        can_view_certificate: false,
-        is_enrolled: true,
-      });
-      setTabData({
-        end: tomorrow.toISOString(),
-        certificate_data: undefined,
-      });
-      await fetchAndRender();
-      expect(screen.getByText(`Final grades and any earned certificates are scheduled to be available after ${tomorrow.toLocaleDateString('en-us', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })}.`)).toBeInTheDocument();
-    });
-
-    it('Shows not available messaging before certificates are available to passing learners when theres no certificate data', async () => {
-      setMetadata({
-        can_view_certificate: false,
-        is_enrolled: true,
-      });
-      setTabData({
-        end: tomorrow.toISOString(),
-        user_has_passing_grade: true,
-        certificate_data: undefined,
-      });
-      await fetchAndRender();
-      expect(screen.getByText(`Final grades and any earned certificates are scheduled to be available after ${tomorrow.toLocaleDateString('en-us', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })}.`)).toBeInTheDocument();
-    });
-
-    it('Shows certificate_available_date if learner is passing', async () => {
-      setMetadata({
-        can_view_certificate: false,
-        is_enrolled: true,
-      });
-      setTabData({
-        end: tomorrow.toISOString(),
-        user_has_passing_grade: true,
-        certificate_data: {
-          cert_status: 'earned_but_not_available',
-          certificate_available_date: overmorrow.toISOString(),
-        },
-      });
-      await fetchAndRender();
-      expect(screen.getByText('Certificate status'));
-      expect(screen.getByText(
-        overmorrow.toLocaleDateString('en-us', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        }),
-      )).toBeInTheDocument();
     });
   });
 

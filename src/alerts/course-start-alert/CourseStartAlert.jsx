@@ -61,34 +61,36 @@ function CourseStartAlert({ payload }) {
   }
 
   return (
-    <Alert variant="info" icon={Info}>
+    <strong>
+    {/* <Alert variant="info" icon={Info}> */}
       <strong>
-        <FormattedMessage
-          id="learning.outline.alert.end.long"
-          defaultMessage="Course starts {timeRemaining} on {courseStartDate}."
-          description="Used when the time remaining is more than a day away."
-          values={{
-            courseStartDate: (
-              <FormattedDate
-                key="courseStartDate"
-                day="numeric"
-                month="short"
-                year="numeric"
-                value={startDate}
-                {...timezoneFormatArgs}
-              />
-            ),
-            timeRemaining,
-          }}
-        />
+        {/* <FormattedMessage
+          id="learning.outline.albhert.end.long"
+          // defaultMessage="Course starts {timeRemaining} on {courseStartDate}."
+          // description="Used when the time remaining is more than a day away."
+          // values={{
+          //   // courseStartDate: (
+          //   //   // <FormattedDate
+          //   //   //   key="courseStartDate"
+          //   //   //   day="numeric"
+          //   //   //   month="short"
+          //   //   //   year="numeric"
+          //   //   //   value={startDate}
+          //   //   //   {...timezoneFormatArgs}
+          //   //   // />
+          //   // ),
+          //   timeRemaining,
+          // }}
+        /> */}
       </strong>
-      <br />
+      {/* <br />
       <FormattedMessage
         id="learning.outline.alert.end.calendar"
         defaultMessage="Don’t forget to add a calendar reminder!"
         description="It's just a recommendation for learners to set a reminder for the course starting date and is shown when the course starting date is more than a day. "
-      />
-    </Alert>
+      /> */}
+    {/* </Alert> */}
+    </strong>
   );
 }
 

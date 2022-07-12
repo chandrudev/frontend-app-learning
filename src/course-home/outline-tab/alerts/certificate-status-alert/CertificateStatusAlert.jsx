@@ -33,6 +33,7 @@ function CertificateStatusAlert({ intl, payload }) {
     courseEndDate,
     courseId,
     certURL,
+    isWebCert,
     userTimezone,
     org,
     notPassingCourseEnded,
@@ -65,8 +66,8 @@ function CertificateStatusAlert({ intl, payload }) {
       alertProps.body = (
         <p>
           <FormattedMessage
-            id="learning.outline.alert.cert.earnedNotAvailable"
-            defaultMessage="This course ends on {courseEndDateFormatted}. Final grades and any earned certificates are
+            id="learning.outline.alert.cert.when"
+            defaultMessage="This course ends on {courseEndDateFormatted}. Final grades and certificates are
             scheduled to be available after {certificateAvailableDate}."
             values={{
               courseEndDateFormatted,
@@ -78,7 +79,11 @@ function CertificateStatusAlert({ intl, payload }) {
       );
     } else if (certStatus === CERT_STATUS_TYPE.DOWNLOADABLE) {
       alertProps.header = intl.formatMessage(certMessages.certStatusDownloadableHeader);
-      alertProps.buttonMessage = intl.formatMessage(certStatusMessages.viewableButton);
+      if (isWebCert) {
+        alertProps.buttonMessage = intl.formatMessage(certStatusMessages.viewableButton);
+      } else {
+        alertProps.buttonMessage = intl.formatMessage(certStatusMessages.downloadableButton);
+      }
       alertProps.buttonVisible = true;
       alertProps.buttonLink = certURL;
       alertProps.buttonAction = () => {
@@ -199,6 +204,7 @@ CertificateStatusAlert.propTypes = {
     courseEndDate: PropTypes.string,
     courseId: PropTypes.string,
     certURL: PropTypes.string,
+    isWebCert: PropTypes.bool,
     userTimezone: PropTypes.string,
     org: PropTypes.string,
     notPassingCourseEnded: PropTypes.bool,

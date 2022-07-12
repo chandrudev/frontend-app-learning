@@ -55,13 +55,12 @@ function CourseCelebration({ intl }) {
   const {
     org,
     verifiedMode,
-    canViewCertificate,
-    userTimezone,
   } = useModel('courseHomeMeta', courseId);
 
   const {
     certStatus,
     certWebViewUrl,
+    downloadUrl,
     certificateAvailableDate,
   } = certificateData || {};
 
@@ -70,7 +69,6 @@ function CourseCelebration({ intl }) {
   const dashboardLink = <DashboardLink />;
   const idVerificationSupportLink = <IdVerificationSupportLink />;
   const profileLink = <ProfileLink />;
-  const timezoneFormatArgs = userTimezone ? { timeZone: userTimezone } : {};
 
   let buttonPrefix = null;
   let buttonLocation;
@@ -103,6 +101,9 @@ function CourseCelebration({ intl }) {
       if (certWebViewUrl) {
         buttonLocation = `${getConfig().LMS_BASE_URL}${certWebViewUrl}`;
         buttonText = intl.formatMessage(messages.viewCertificateButton);
+      } else if (downloadUrl) {
+        buttonLocation = downloadUrl;
+        buttonText = intl.formatMessage(messages.downloadButton);
       }
       if (linkedinAddToProfileUrl) {
         buttonPrefix = (
@@ -129,9 +130,9 @@ function CourseCelebration({ intl }) {
         <>
           <p>
             <FormattedMessage
-              id="courseCelebration.certificateBody.notAvailable.endDate.v2"
-              defaultMessage="This course ends on {endDate}. Final grades and any earned certificates are
-              scheduled to be available after {certAvailableDate}."
+              id="courseCelebration.certificateBody.notAvailable.endDate"
+              defaultMessage="This course ended on {endDate} and final grades and certificates are scheduled to be
+              available after {certAvailableDate}."
               values={{ endDate, certAvailableDate }}
               description="This shown for leaner when they are eligible for certifcate but it't not available yet, it could because leaners just finished the course quickly!"
             />
@@ -247,29 +248,6 @@ function CourseCelebration({ intl }) {
       }
       break;
     default:
-      if (!canViewCertificate) {
-        //  We reuse the cert event here. Since this default state is so
-        //  Similar to the earned_not_available state, this event name should be fine
-        //  to cover the same cases.
-        visitEvent = 'celebration_with_unavailable_cert';
-        certHeader = intl.formatMessage(messages.certificateHeaderNotAvailable);
-        const endDate = intl.formatDate(end, {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          ...timezoneFormatArgs,
-        });
-        message = (
-          <>
-            <p>
-              {intl.formatMessage(messages.certificateNotAvailableEndDateBody, { endDate })}
-            </p>
-            <p>
-              {intl.formatMessage(messages.certificateNotAvailableBodyAccessCert)}
-            </p>
-          </>
-        );
-      }
       break;
   }
 

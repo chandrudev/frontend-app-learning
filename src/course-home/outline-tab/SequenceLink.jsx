@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
+import { Hyperlink } from '@edx/paragon';
 import {
   FormattedMessage,
   FormattedTime,
@@ -16,6 +17,8 @@ import EffortEstimate from '../../shared/effort-estimate';
 import { useModel } from '../../generic/model-store';
 import messages from './messages';
 
+import './outlinetab.css'
+
 function SequenceLink({
   id,
   intl,
@@ -27,21 +30,30 @@ function SequenceLink({
     complete,
     description,
     due,
+    legacyWebUrl,
     showLink,
     title,
   } = sequence;
   const {
     userTimezone,
   } = useModel('outline', courseId);
+  const {
+    canLoadCourseware,
+  } = useModel('courseHomeMeta', courseId);
 
   const timezoneFormatArgs = userTimezone ? { timeZone: userTimezone } : {};
 
-  const coursewareUrl = <Link to={`/course/${courseId}/${id}`}>{title}</Link>;
+  // canLoadCourseware is true if the Courseware MFE is enabled, false otherwise
+  const coursewareUrl = (
+    canLoadCourseware
+      ? <Link className='link' to={`/course/${courseId}/${id}`}>{title}</Link>
+      : <Hyperlink destination={legacyWebUrl}>{title}</Hyperlink>
+  );
   const displayTitle = showLink ? coursewareUrl : title;
 
   return (
     <li>
-      <div className={classNames('', { 'mt-2 pt-2 border-top border-light': !first })}>
+      <div className={classNames('', { 'mt-2 pt-2': !first })}>
         <div className="row w-100 m-0">
           <div className="col-auto p-0">
             {complete ? (

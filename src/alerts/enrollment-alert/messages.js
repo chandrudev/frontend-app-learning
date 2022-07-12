@@ -8,7 +8,7 @@ const messages = defineMessages({
   },
   staffAlert: {
     id: 'learning.staff.enrollment.alert',
-    defaultMessage: 'You are viewing this course as staff, and are not enrolled.',
+    defaultMessage: 'You are not enrolled in this course, click here to enroll now.',
     description: 'Message shown to indicate that a user is not enrolled, but is able to view a course anyway because they are staff. Shown as part of an alert, along with a link to enroll.',
   },
   enrollNowInline: {

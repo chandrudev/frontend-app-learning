@@ -80,9 +80,9 @@ describe('Courseware Service', () => {
       expect(response).toEqual(normalizedOutline);
     });
 
-    it('skips unreleased sequences', async () => {
+    it('skips inaccessible sequences', async () => {
       await provider.addInteraction({
-        state: `Outline exists with unreleased sequences for course_id ${courseId}`,
+        state: `Outline exists with inaccessible sequences for course_id ${courseId}`,
         uponReceiving: 'a request to get an outline',
         withRequest: {
           method: 'GET',
@@ -97,21 +97,18 @@ describe('Courseware Service', () => {
               sections: [
                 {
                   id: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@partial',
-                  title: 'Partially released',
+                  title: 'Partially accessible',
                   sequence_ids: [
                     'block-v1:edX+DemoX+Demo_Course+type@sequential+block@accessible',
-                    'block-v1:edX+DemoX+Demo_Course+type@sequential+block@released',
                     'block-v1:edX+DemoX+Demo_Course+type@sequential+block@nope1',
                   ],
-                  effective_start: null,
                 },
                 {
                   id: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@nope',
-                  title: 'Wholly unreleased',
+                  title: 'Wholly inaccessible',
                   sequence_ids: [
                     'block-v1:edX+DemoX+Demo_Course+type@sequential+block@nope2',
                   ],
-                  effective_start: '9999-07-01T17:00:00Z',
                 },
               ],
               sequences: {
@@ -119,23 +116,17 @@ describe('Courseware Service', () => {
                   id: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@accessible',
                   title: 'Can access',
                   accessible: true,
-                  effective_start: '9999-07-01T17:00:00Z',
-                },
-                'block-v1:edX+DemoX+Demo_Course+type@sequential+block@released': {
-                  id: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@released',
-                  title: 'Released and inaccessible',
-                  accessible: false,
                   effective_start: '2019-07-01T17:00:00Z',
                 },
                 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@nope1': {
                   id: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@nope1',
-                  title: 'Unreleased',
+                  title: 'Cannot access',
                   accessible: false,
                   effective_start: '9999-07-01T17:00:00Z',
                 },
                 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@nope2': {
                   id: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@nope2',
-                  title: 'Still unreleased',
+                  title: 'Still cannot access',
                   accessible: false,
                   effective_start: '9999-07-01T17:00:00Z',
                 },
@@ -158,11 +149,10 @@ describe('Courseware Service', () => {
         sections: {
           'block-v1:edX+DemoX+Demo_Course+type@chapter+block@partial': {
             id: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@partial',
-            title: 'Partially released',
+            title: 'Partially accessible',
             courseId: 'course-v1:edX+DemoX+Demo_Course',
             sequenceIds: [
               'block-v1:edX+DemoX+Demo_Course+type@sequential+block@accessible',
-              'block-v1:edX+DemoX+Demo_Course+type@sequential+block@released',
             ],
           },
         },
@@ -171,11 +161,7 @@ describe('Courseware Service', () => {
             id: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@accessible',
             title: 'Can access',
             sectionId: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@partial',
-          },
-          'block-v1:edX+DemoX+Demo_Course+type@sequential+block@released': {
-            id: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@released',
-            title: 'Released and inaccessible',
-            sectionId: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@partial',
+            legacyWebUrl: `${getConfig().LMS_BASE_URL}/courses/course-v1:edX+DemoX+Demo_Course/jump_to/block-v1:edX+DemoX+Demo_Course+type@sequential+block@accessible?experience=legacy`,
           },
         },
       };
@@ -269,6 +255,7 @@ describe('Courseware Service', () => {
             }),
             show_calculator: boolean(false),
             original_user_is_staff: boolean(true),
+            can_view_legacy_courseware: boolean(true),
             is_staff: boolean(true),
             course_access: like({
               has_access: true,
@@ -283,7 +270,7 @@ describe('Courseware Service', () => {
             user_has_passing_grade: boolean(false),
             course_exit_page_is_active: boolean(false),
             certificate_data: {
-              cert_status: string('audit_passing'), cert_web_view_url: null, certificate_available_date: null,
+              cert_status: string('audit_passing'), cert_web_view_url: null, download_url: null, certificate_available_date: null,
             },
             verify_identity_url: null,
             verification_status: string('none'),
@@ -318,6 +305,7 @@ describe('Courseware Service', () => {
         start: '2013-02-05T05:00:00Z',
         enrollmentMode: 'audit',
         isEnrolled: true,
+        canViewLegacyCourseware: true,
         license: 'all-rights-reserved',
         userTimezone: null,
         showCalculator: false,
@@ -328,6 +316,7 @@ describe('Courseware Service', () => {
         certificateData: {
           certStatus: 'audit_passing',
           certWebViewUrl: null,
+          downloadUrl: null,
           certificateAvailableDate: null,
         },
         timeOffsetMillis: 0,

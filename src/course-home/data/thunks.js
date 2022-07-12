@@ -11,7 +11,6 @@ import {
   postWeeklyLearningGoal,
   postDismissWelcomeMessage,
   postRequestCert,
-  getLiveTabIframe,
 } from './api';
 
 import {
@@ -33,38 +32,46 @@ const eventTypes = {
 export function fetchTab(courseId, tab, getTabData, targetUserId) {
   return async (dispatch) => {
     dispatch(fetchTabRequest({ courseId }));
-    try {
-      const courseHomeCourseMetadata = await getCourseHomeCourseMetadata(courseId, 'outline');
-      dispatch(addModel({
-        modelType: 'courseHomeMeta',
-        model: {
-          id: courseId,
-          ...courseHomeCourseMetadata,
-        },
-      }));
-      const tabDataResult = getTabData && await getTabData(courseId, targetUserId);
-      if (tabDataResult) {
+    Promise.allSettled([
+      getCourseHomeCourseMetadata(courseId, 'outline'),
+      getTabData(courseId, targetUserId),
+    ]).then(([courseHomeCourseMetadataResult, tabDataResult]) => {
+      const fetchedCourseHomeCourseMetadata = courseHomeCourseMetadataResult.status === 'fulfilled';
+      const fetchedTabData = tabDataResult.status === 'fulfilled';
+
+      if (fetchedCourseHomeCourseMetadata) {
+        dispatch(addModel({
+          modelType: 'courseHomeMeta',
+          model: {
+            id: courseId,
+            ...courseHomeCourseMetadataResult.value,
+          },
+        }));
+      } else {
+        logError(courseHomeCourseMetadataResult.reason);
+      }
+
+      if (fetchedTabData) {
         dispatch(addModel({
           modelType: tab,
           model: {
             id: courseId,
-            ...tabDataResult,
+            ...tabDataResult.value,
           },
         }));
+      } else {
+        logError(tabDataResult.reason);
       }
+
       // Disable the access-denied path for now - it caused a regression
-      if (!courseHomeCourseMetadata.courseAccess.hasAccess) {
+      if (fetchedCourseHomeCourseMetadata && !courseHomeCourseMetadataResult.value.courseAccess.hasAccess) {
         dispatch(fetchTabDenied({ courseId }));
-      } else if (tabDataResult || !getTabData) {
-        dispatch(fetchTabSuccess({
-          courseId,
-          targetUserId,
-        }));
+      } else if (fetchedCourseHomeCourseMetadata && fetchedTabData) {
+        dispatch(fetchTabSuccess({ courseId, targetUserId }));
+      } else {
+        dispatch(fetchTabFailure({ courseId }));
       }
-    } catch (e) {
-      dispatch(fetchTabFailure({ courseId }));
-      logError(e);
-    }
+    });
   };
 }
 
@@ -78,14 +85,6 @@ export function fetchProgressTab(courseId, targetUserId) {
 
 export function fetchOutlineTab(courseId) {
   return fetchTab(courseId, 'outline', getOutlineTabData);
-}
-
-export function fetchLiveTab(courseId) {
-  return fetchTab(courseId, 'live', getLiveTabIframe);
-}
-
-export function fetchDiscussionTab(courseId) {
-  return fetchTab(courseId, 'discussion');
 }
 
 export function dismissWelcomeMessage(courseId) {

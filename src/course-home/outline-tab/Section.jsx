@@ -2,19 +2,23 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Collapsible, IconButton } from '@edx/paragon';
-import { faCheckCircle as fasCheckCircle, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle as fasCheckCircle, faMinus, faPlus, faLock } from '@fortawesome/free-solid-svg-icons';
 import { faCheckCircle as farCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import SequenceLink from './SequenceLink';
+import ResourceLink from './ResourceLink';
 import { useModel } from '../../generic/model-store';
 
 import genericMessages from '../../generic/messages';
 import messages from './messages';
 
+import './outlinetab.css'
+
 function Section({
   courseId,
   defaultOpen,
+  lockSection,
   expand,
   intl,
   section,
@@ -31,6 +35,7 @@ function Section({
   } = useModel('outline', courseId);
 
   const [open, setOpen] = useState(defaultOpen);
+  const [paid, setPaid] = useState(false);
 
   useEffect(() => {
     setOpen(expand);
@@ -51,9 +56,17 @@ function Section({
             aria-hidden="true"
             title={intl.formatMessage(messages.completedSection)}
           />
+        ) : lockSection === true ? (
+          <FontAwesomeIcon
+          icon={faLock}
+            fixedWidth
+            className="float-left mt-1 text-gray-400"
+            aria-hidden="true"
+            title={intl.formatMessage(messages.incompleteSection)}
+          />
         ) : (
           <FontAwesomeIcon
-            icon={farCheckCircle}
+          icon={farCheckCircle}
             fixedWidth
             className="float-left mt-1 text-gray-400"
             aria-hidden="true"
@@ -71,10 +84,9 @@ function Section({
   );
 
   return (
-    <li>
+    <li className='course_list'>
       <Collapsible
-        className="mb-2"
-        styling="card-lg"
+        styling="card-lg course_card"
         title={sectionTitle}
         open={open}
         onToggle={() => { setOpen(!open); }}
@@ -82,6 +94,7 @@ function Section({
           <IconButton
             alt={intl.formatMessage(messages.openSection)}
             icon={faPlus}
+            className="hidden"
             onClick={() => { setOpen(true); }}
             size="sm"
           />
@@ -90,6 +103,7 @@ function Section({
           <IconButton
             alt={intl.formatMessage(genericMessages.close)}
             icon={faMinus}
+            className="hidden"
             onClick={() => { setOpen(false); }}
             size="sm"
           />
@@ -104,7 +118,9 @@ function Section({
               sequence={sequences[sequenceId]}
               first={index === 0}
             />
-          ))}
+          ))
+          }
+          <ResourceLink courseId={courseId}/>
         </ol>
       </Collapsible>
     </li>
@@ -117,6 +133,7 @@ Section.propTypes = {
   expand: PropTypes.bool.isRequired,
   intl: intlShape.isRequired,
   section: PropTypes.shape().isRequired,
+  lockSection: PropTypes.bool
 };
 
 export default injectIntl(Section);

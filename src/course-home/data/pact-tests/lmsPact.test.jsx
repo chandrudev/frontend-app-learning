@@ -58,6 +58,7 @@ describe('Course Home Service', () => {
               sku: '8CF08E5',
               upgrade_url: `${getConfig().ECOMMERCE_BASE_URL}/basket/add/?sku=8CF08E5`,
             }),
+            can_load_courseware: boolean(true),
             celebrations: like({
               first_section: false,
               streak_length_to_celebrate: null,
@@ -105,6 +106,7 @@ describe('Course Home Service', () => {
           sku: '8CF08E5',
           upgradeUrl: `${getConfig().ECOMMERCE_BASE_URL}/basket/add/?sku=8CF08E5`,
         },
+        canLoadCourseware: true,
         celebrations: {
           firstSection: false,
           streakLengthToCelebrate: null,

@@ -465,7 +465,7 @@ describe('CoursewareContainer', () => {
       const { courseMetadata } = setUpWithDeniedStatus('enrollment_required');
       await loadContainer();
 
-      expect(global.location.href).toEqual(`http://localhost/course/${courseMetadata.id}/home`);
+      expect(global.location.href).toEqual(`http://localhost/redirect/course-home/${courseMetadata.id}`);
     });
 
     it('should go to course survey for a survey_required error code', async () => {
@@ -479,7 +479,7 @@ describe('CoursewareContainer', () => {
       const { courseMetadata } = setUpWithDeniedStatus('authentication_required');
       await loadContainer();
 
-      expect(global.location.href).toEqual(`http://localhost/course/${courseMetadata.id}/home`);
+      expect(global.location.href).toEqual(`http://localhost/redirect/course-home/${courseMetadata.id}`);
     });
 
     it('should go to dashboard for an unfulfilled_milestones error code', async () => {
@@ -502,6 +502,23 @@ describe('CoursewareContainer', () => {
 
       const startDate = '2/5/2013'; // This date is based on our courseMetadata factory's sample data.
       expect(global.location.href).toEqual(`http://localhost/redirect/dashboard?notlive=${startDate}`);
+    });
+  });
+
+  describe('redirects when canLoadCourseware is false', () => {
+    it('should go to legacy courseware for disabled frontend', async () => {
+      const courseMetadata = Factory.build('courseMetadata');
+      const courseHomeMetadata = Factory.build('courseHomeMetadata', {
+        can_load_courseware: false,
+      });
+      const courseId = courseMetadata.id;
+      const { courseBlocks, sequenceBlocks, unitBlocks } = buildSimpleCourseBlocks(courseId, courseMetadata.name);
+      setUpMockRequests({ courseBlocks, courseMetadata, courseHomeMetadata });
+      history.push(`/course/${courseId}/${sequenceBlocks[0].id}/${unitBlocks[0].id}`);
+
+      await loadContainer();
+
+      expect(global.location.href).toEqual(`http://localhost/redirect/courseware/${courseMetadata.id}/unit/${unitBlocks[0].id}`);
     });
   });
 });

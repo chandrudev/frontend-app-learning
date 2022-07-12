@@ -148,9 +148,12 @@ export function normalizeOutlineBlocks(courseId, blocks) {
           effortTime: block.effort_time,
           icon: block.icon,
           id: block.id,
-          // The presence of a URL for the sequence indicates that we want this sequence to be a clickable
-          // link in the outline (even though we ignore the given url and use an internal <Link> to ourselves).
-          showLink: !!block.lms_web_url,
+          legacyWebUrl: block.legacy_web_url,
+          // The presence of an legacy URL for the sequence indicates that we want this
+          // sequence to be a clickable link in the outline (even though, if the new
+          // courseware experience is active, we will ignore `legacyWebUrl` and build a
+          // link to the MFE ourselves).
+          showLink: !!block.legacy_web_url,
           title: block.display_name,
         };
         break;
@@ -205,6 +208,10 @@ export async function getDatesTabData(courseId) {
     return camelCaseObject(data);
   } catch (error) {
     const { httpErrorStatus } = error && error.customAttributes;
+    if (httpErrorStatus === 404) {
+      global.location.replace(`${getConfig().LMS_BASE_URL}/courses/${courseId}/dates`);
+      return {};
+    }
     if (httpErrorStatus === 401) {
       // The backend sends this for unenrolled and unauthenticated learners, but we handle those cases by examining
       // courseAccess in the metadata call, so just ignore this status for now.
@@ -290,20 +297,6 @@ export async function getProctoringInfoData(courseId, username) {
   }
 }
 
-export async function getLiveTabIframe(courseId) {
-  const url = `${getConfig().LMS_BASE_URL}/api/course_live/iframe/${courseId}/`;
-  try {
-    const { data } = await getAuthenticatedHttpClient().get(url);
-    return data;
-  } catch (error) {
-    const { httpErrorStatus } = error && error.customAttributes;
-    if (httpErrorStatus === 404) {
-      return {};
-    }
-    throw error;
-  }
-}
-
 export function getTimeOffsetMillis(headerDate, requestTime, responseTime) {
   // Time offset computation should move down into the HttpClient wrapper to maintain a global time correction reference
   // Requires 'Access-Control-Expose-Headers: Date' on the server response per https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#access-control-expose-headers
@@ -321,9 +314,21 @@ export function getTimeOffsetMillis(headerDate, requestTime, responseTime) {
 
 export async function getOutlineTabData(courseId) {
   const url = `${getConfig().LMS_BASE_URL}/api/course_home/outline/${courseId}`;
-  const requestTime = Date.now();
-  const tabData = await getAuthenticatedHttpClient().get(url);
-  const responseTime = Date.now();
+  let { tabData } = {};
+  let requestTime = Date.now();
+  let responseTime = requestTime;
+  try {
+    requestTime = Date.now();
+    tabData = await getAuthenticatedHttpClient().get(url);
+    responseTime = Date.now();
+  } catch (error) {
+    const { httpErrorStatus } = error && error.customAttributes;
+    if (httpErrorStatus === 404) {
+      global.location.replace(`${getConfig().LMS_BASE_URL}/courses/${courseId}/course/`);
+      return {};
+    }
+    throw error;
+  }
 
   const {
     data,

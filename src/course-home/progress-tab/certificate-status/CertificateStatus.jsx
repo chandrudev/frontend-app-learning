@@ -22,8 +22,6 @@ function CertificateStatus({ intl }) {
   const {
     isEnrolled,
     org,
-    canViewCertificate,
-    userTimezone,
   } = useModel('courseHomeMeta', courseId);
 
   const {
@@ -47,8 +45,6 @@ function CertificateStatus({ intl }) {
     hasScheduledContent,
     isEnrolled,
     userHasPassingGrade,
-    null, // CourseExitPageIsActive
-    canViewCertificate,
   );
 
   const eventProperties = {
@@ -61,11 +57,12 @@ function CertificateStatus({ intl }) {
 
   let certStatus;
   let certWebViewUrl;
-  const timezoneFormatArgs = userTimezone ? { timeZone: userTimezone } : {};
+  let downloadUrl;
 
   if (certificateData) {
     certStatus = certificateData.certStatus;
     certWebViewUrl = certificateData.certWebViewUrl;
+    downloadUrl = certificateData.downloadUrl;
   }
 
   let certCase;
@@ -141,10 +138,15 @@ function CertificateStatus({ intl }) {
             values={{ dashboardLink, profileLink }}
           />
         );
+
         if (certWebViewUrl) {
           certEventName = 'earned_viewable';
           buttonLocation = `${getConfig().LMS_BASE_URL}${certWebViewUrl}`;
           buttonText = intl.formatMessage(messages.viewableButton);
+        } else if (downloadUrl) {
+          certEventName = 'earned_downloadable';
+          buttonLocation = downloadUrl;
+          buttonText = intl.formatMessage(messages.downloadableButton);
         }
         break;
 
@@ -155,7 +157,7 @@ function CertificateStatus({ intl }) {
         body = (
           <FormattedMessage
             id="courseCelebration.certificateBody.notAvailable.endDate"
-            defaultMessage="This course ends on {endDate}. Final grades and any earned certificates are
+            defaultMessage="This course ends on {endDate}. Final grades and certificates are
             scheduled to be available after {certAvailabilityDate}."
             description="This shown for leaner when they are eligible for certifcate but it't not available yet, it could because leaners just finished the course quickly!"
             values={{ endDate, certAvailabilityDate }}
@@ -176,22 +178,10 @@ function CertificateStatus({ intl }) {
         }
         break;
 
+      // This code shouldn't be hit but coding defensively since switch expects a default statement
       default:
-        // if user completes a course before certificates are available, treat it as notAvailable
-        // regardless of passing or nonpassing status
-        if (!canViewCertificate) {
-          certCase = 'notAvailable';
-          endDate = intl.formatDate(end, {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            ...timezoneFormatArgs,
-          });
-          body = intl.formatMessage(messages.notAvailableEndDateBody, { endDate });
-        } else {
-          certCase = null;
-          certEventName = 'no_certificate_status';
-        }
+        certCase = null;
+        certEventName = 'no_certificate_status';
         break;
     }
   }

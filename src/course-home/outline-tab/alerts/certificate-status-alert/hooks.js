@@ -51,8 +51,10 @@ function useCertificateStatusAlert(courseId) {
     certStatus,
     certWebViewUrl,
     certificateAvailableDate,
+    downloadUrl,
   } = certData || {};
   const endBlock = courseDateBlocks.find(b => b.dateType === 'course-end-date');
+  const isWebCert = downloadUrl === null;
   const isVerifiedEnrollmentMode = (
     enrollmentMode !== null
     && enrollmentMode !== undefined
@@ -61,6 +63,9 @@ function useCertificateStatusAlert(courseId) {
   let certURL = '';
   if (certWebViewUrl) {
     certURL = `${getConfig().LMS_BASE_URL}${certWebViewUrl}`;
+  } else if (downloadUrl) {
+    // PDF Certificate
+    certURL = downloadUrl;
   }
   const hasAlertingCertStatus = verifyCertStatusType(certStatus);
 
@@ -82,6 +87,7 @@ function useCertificateStatusAlert(courseId) {
     courseId,
     courseEndDate: endBlock && endBlock.date,
     userTimezone,
+    isWebCert,
     org,
     notPassingCourseEnded,
     tabs,

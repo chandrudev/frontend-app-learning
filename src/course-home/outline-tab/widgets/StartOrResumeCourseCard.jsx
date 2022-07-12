@@ -42,7 +42,7 @@ function StartOrResumeCourseCard({ intl }) {
 
   return (
     <Card className="mb-3 raised-card" data-testid="start-resume-card">
-      <Card.Header
+      {/* <Card.Header
         title={hasVisitedCourse ? intl.formatMessage(messages.resumeBlurb) : intl.formatMessage(messages.startBlurb)}
         actions={(
           <Button
@@ -54,9 +54,9 @@ function StartOrResumeCourseCard({ intl }) {
             {hasVisitedCourse ? intl.formatMessage(messages.resume) : intl.formatMessage(messages.start)}
           </Button>
         )}
-      />
+      /> */}
       {/* Footer is needed for internal vertical spacing to work out. If you can remove, be my guest */}
-      <Card.Footer><></></Card.Footer>
+      {/* <Card.Footer><></></Card.Footer> */}
     </Card>
   );
 }
