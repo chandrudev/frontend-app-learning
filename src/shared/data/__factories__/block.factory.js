@@ -2,7 +2,7 @@ import { Factory } from 'rosie'; // eslint-disable-line import/no-extraneous-dep
 
 Factory.define('block')
   .option('courseId', 'course-v1:edX+DemoX+Demo_Course')
-  .option('host', 'http://localhost:18000')
+  .option('host', 'http://student.launchpadlearning.ca')
   // Generating block_id that is similar to md5 hash, but still deterministic
   .sequence('block_id', id => ('abcd'.repeat(8) + id).slice(-32))
   .attrs({

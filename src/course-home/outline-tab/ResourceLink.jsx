@@ -18,7 +18,7 @@ function ResourceLink(props) {
   };
 
   var documentList = function () {
-    const endpoint = "http://localhost:18000/get_doc/";
+    const endpoint = "http://student.launchpadlearning.ca/get_doc/";
     const doc_id = { doc_id: props.courseId };
     const response = fetch(endpoint, {
       method: "post",

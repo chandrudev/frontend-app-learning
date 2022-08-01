@@ -260,7 +260,7 @@ describe('Course Exit Pages', () => {
             slug: 'micromasters',
             title: 'Example MicroMasters Program',
             uuid: '123456',
-            url: 'http://localhost:18000/dashboard/programs/123456',
+            url: 'http://student.launchpadlearning.ca/dashboard/programs/123456',
           }],
         });
         await fetchAndRender(<CourseCelebration />);
@@ -279,7 +279,7 @@ describe('Course Exit Pages', () => {
             slug: 'micromasters',
             title: 'Example MicroMasters Program',
             uuid: '123456',
-            url: 'http://localhost:18000/dashboard/programs/123456',
+            url: 'http://student.launchpadlearning.ca/dashboard/programs/123456',
           }],
         });
         await fetchAndRender(<CourseCelebration />);
@@ -299,7 +299,7 @@ describe('Course Exit Pages', () => {
             slug: 'excluded-program-type',
             title: 'Example Excluded Program',
             uuid: '123456',
-            url: 'http://localhost:18000/dashboard/programs/123456',
+            url: 'http://student.launchpadlearning.ca/dashboard/programs/123456',
           }],
         });
         await fetchAndRender(<CourseCelebration />);

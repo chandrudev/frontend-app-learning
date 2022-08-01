@@ -4,7 +4,7 @@ import { buildMinimalCourseBlocks } from '../../../shared/data/__factories__/cou
 
 Factory.define('outlineTabData')
   .option('courseId', 'course-v1:edX+DemoX+Demo_Course')
-  .option('host', 'http://localhost:18000')
+  .option('host', 'http://student.launchpadlearning.ca')
   .option('date_blocks', [])
   .attr('course_blocks', ['courseId'], courseId => {
     const { courseBlocks } = buildMinimalCourseBlocks(courseId);

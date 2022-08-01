@@ -13,7 +13,7 @@ Instead, we've chosen to load data via the following:
 - The course blocks API (/api/courses/v2/blocks) for getting the overall structure of the course (limited data on the whole hierarchy)
 - The course metadata API (/api/courseware/course) for detailed top-level data, such as dates, enrollment status, info for tabs across the top of the page, etc.
 - The sequence metadata API (/api/courseware/sequence) for detailed information on a sequence, such as which unit to display, any banner messages, whether or not the sequence has a prerequisite, if it's an exam, etc.
-- The xblock endpoint (http://localhost:18000/xblock/:block_id) which renders HTML for an xBlock by ID, used to render Unit contents.  This HTML is loaded into the application via an iFrame.
+- The xblock endpoint (http://student.launchpadlearning.ca/xblock/:block_id) which renders HTML for an xBlock by ID, used to render Unit contents.  This HTML is loaded into the application via an iFrame.
 
 These APIs aren't perfect for our usage, but they're getting the job done for now.  They weren't built for our purposes and thus load more information than we strictly need, and aren't as performant as we'd like.  Future milestones of the application may rely on new, more performant APIs (possibly BFFs)
 

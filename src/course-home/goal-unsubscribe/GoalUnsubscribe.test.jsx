@@ -46,7 +46,7 @@ describe('GoalUnsubscribe', () => {
     expect(screen.getByText('You’ve unsubscribed from goal reminders')).toBeInTheDocument();
     expect(screen.getByText(/your goal for My Sample Course/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Go to dashboard' }))
-      .toHaveAttribute('href', 'http://localhost:18000/dashboard');
+      .toHaveAttribute('href', 'http://student.launchpadlearning.ca/dashboard');
   });
 
   it('loads a bad token with an error page', async () => {
@@ -55,8 +55,8 @@ describe('GoalUnsubscribe', () => {
 
     expect(screen.getByText('Something went wrong')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Go to dashboard' }))
-      .toHaveAttribute('href', 'http://localhost:18000/dashboard');
+      .toHaveAttribute('href', 'http://student.launchpadlearning.ca/dashboard');
     expect(screen.getByRole('link', { name: 'contact support' }))
-      .toHaveAttribute('href', 'http://localhost:18000/contact');
+      .toHaveAttribute('href', 'http://student.launchpadlearning.ca/contact');
   });
 });

@@ -3,7 +3,7 @@ import courseMetadataBase from '../../../shared/data/__factories__/courseMetadat
 
 Factory.define('courseHomeMetadata')
   .extend(courseMetadataBase)
-  .option('host', 'http://localhost:18000')
+  .option('host', 'http://student.launchpadlearning.ca')
   .attrs({
     title: 'Demonstration Course',
     is_self_paced: false,
