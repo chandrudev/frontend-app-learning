@@ -120,8 +120,7 @@ function Section({
             />
           ))
           }
-          <ResourceLink courseId={courseId}/>
-        </ol>
+<ResourceLink courseId={courseId} section={section}/>        </ol>
       </Collapsible>
     </li>
   );
