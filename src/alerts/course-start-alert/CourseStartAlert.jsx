@@ -98,6 +98,6 @@ CourseStartAlert.propTypes = {
   payload: PropTypes.shape({
     courseId: PropTypes.string,
   }).isRequired,
-}:
+};
 
 export default CourseStartAlert;
