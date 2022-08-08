@@ -17,7 +17,7 @@ Factory.define('outlineTabData')
   }))
   .attr('resume_course', ['host', 'courseId'], (host, courseId) => ({
     has_visited_course: false,
-    url: `${host}/courses/${courseId}/jump_to/block-v1:edX+Test+Block@12345abcde`,
+    url: `${host}/courses/${courseId}/jump_to/${courseId}`,
   }))
   .attr('verified_mode', ['host'], (host) => ({
     access_expiration_date: '2050-01-01T12:00:00',
@@ -25,7 +25,7 @@ Factory.define('outlineTabData')
     currency_symbol: '$',
     price: 149,
     sku: 'ABCD1234',
-    upgrade_url: `${host}/dashboard`,
+    upgrade_url: `${host}/dashboard/`,
   }))
   .attrs({
     has_scheduled_content: null,
