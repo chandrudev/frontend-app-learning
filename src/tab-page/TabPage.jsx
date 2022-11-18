@@ -85,7 +85,7 @@ function TabPage({ intl, ...props }) {
         {metadataModel === 'courseHomeMeta' && (<LaunchCourseHomeTourButton srOnly />)}
         {/* <Header /> */}
         <div className="header">
-          <img src="https://launchpadedx.s3.us-west-1.amazonaws.com/logo.png" style={{width: 135}} />
+          <img src="https://launchpadedx.s3.us-west-1.amazonaws.com/logo.png" style={{width: 135; height:150}} />
           <div className="menu-list">
             <ul  className= "menu">
               <li><a href={`${getConfig().LMS_BASE_URL}/dashboard`} style={{color: 'black'}}>Dashboard</a></li>
@@ -95,7 +95,7 @@ function TabPage({ intl, ...props }) {
           <ul className='right-menu'>
             <li><img src={icon_coin_back} /> <span>3</span> </li>
             <li><img src={icon} /> <span>1</span> </li>
-            <li><img src="https://launchpadedx.s3.us-west-1.amazonaws.com/profile.png" /></li>
+            <li><img src="https://launchpadedx.s3.us-west-1.amazonaws.com/profile.png"style={{width: 135; height:150}} /></li>
           </ul>
         </div>
         </div>
