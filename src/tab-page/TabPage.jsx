@@ -105,6 +105,7 @@ function TabPage({ intl, ...props }) {
     );
   }
 
+
   // courseStatus 'failed' and any other unexpected course status.
   return (
     <>
