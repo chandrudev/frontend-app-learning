@@ -1,0 +1,49 @@
+/* @font-face {
+    font-family: 'GROBOLD';
+    src: url(../../fonts/GROBOLD.eot);
+    src: url(../../fonts/GROBOLD.eot?#iefix) format('embedded-opentype'),
+         url(../../fonts/GROBOLD.otf) format('otf'),
+         url(../../fonts/GROBOLD.svg#GROBOLD) format('svg'),
+         url(../../fonts/GROBOLD.ttf) format('truetype'),
+         url(../../fonts/GROBOLD.woff) format('woff'),
+         url(../../fonts/GROBOLD.woff2) format('woff2');
+  } */
+.h2{
+    font-size: 48px; 
+    width: 400px; 
+    margin: 0 auto;
+}
+.banner{
+    background-color: #F5D547; 
+    padding: 80px;
+    text-align: center;
+    margin: 0 -12px;
+}
+.hidden{
+    display: none;
+}
+.course_card{
+    border: none;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.06);
+}
+.collapsible-card .collapsible-trigger[aria-expanded=true], .collapsible-card-lg .collapsible-trigger[aria-expanded=true]{
+    border: none;
+}
+.link:hover,.link{
+    text-decoration: none;
+    font-size: 14px;
+    color: #000;
+}
+
+/* .course_list:not(:first-child):not(:nth-child(2)){
+    pointer-events: none;
+} */
+.course_list:before:not(:first-child):not(:nth-child(2)){
+    content: '';
+    background: #f00;
+    width: 10px;
+    height: 10px;
+    border-radius: 20px;
+}
+

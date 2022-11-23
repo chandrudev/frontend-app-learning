@@ -7,7 +7,10 @@ import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import "./outlinetab.css";
 
 function ResourceLink(props) {
+  
   const download = (path, filename) => {
+    alert(path);
+    alert(filename);
     const anchor = document.createElement("a");
     anchor.href = path;
     anchor.target = "_blank";
@@ -26,7 +29,9 @@ function ResourceLink(props) {
     })
       .then((data) => data.json())
       .then((response) => {
+        console.log(response)
         var data = response["data"];
+        console.log(props.section.title);
         var items = data.filter((e) => {
           if (
             e.document_name !== null &&

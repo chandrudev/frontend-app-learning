@@ -11,7 +11,7 @@ function IntlDashboardLink({ intl }) {
     <Hyperlink
       variant="muted"
       isInline
-      destination={`${getConfig().LMS_BASE_URL}/dashboard/`}
+      destination={`${getConfig().LMS_BASE_URL}/dashboard`}
     >
       {intl.formatMessage(messages.dashboardLink)}
     </Hyperlink>

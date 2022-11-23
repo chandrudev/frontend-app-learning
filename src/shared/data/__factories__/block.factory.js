@@ -54,6 +54,6 @@ Factory.define('block')
         return url;
       }
 
-      return `${host}/courses/${courseId}/jump_to/${courseId}?experience=legacy`;
+      return `${host}/courses/${courseId}/jump_to/${id}?experience=legacy`;
     },
   );

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
+import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 
 import Footer from '@edx/frontend-component-footer';
 import { Toast } from '@edx/paragon';
@@ -15,12 +16,14 @@ import genericMessages from '../generic/messages';
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import messages from './messages';
 import LoadedTabPage from './LoadedTabPage';
-import logo from './images/logo.svg';
+import logo from './images/logo.png';
 import icon_coin_back from './images/icon_coin_back.svg';
 import icon from './images/icon.svg';
+import profile_icon from './images/profile.png';
 
 import { setCallToActionToast } from '../course-home/data/slice';
 import LaunchCourseHomeTourButton from '../product-tours/newUserCourseHomeTour/LaunchCourseHomeTourButton';
+
 
 function TabPage({ intl, ...props }) {
   const {
@@ -44,6 +47,7 @@ function TabPage({ intl, ...props }) {
     start,
     title,
   } = useModel('courseHomeMeta', courseId);
+  const { username } = getAuthenticatedUser();
 
   if (courseStatus === 'loading') {
     return (
@@ -85,7 +89,7 @@ function TabPage({ intl, ...props }) {
         {metadataModel === 'courseHomeMeta' && (<LaunchCourseHomeTourButton srOnly />)}
         {/* <Header /> */}
         <div className="header">
-          <img src="https://launchpadedx.s3.us-west-1.amazonaws.com/logo.png" style={{width: 135, height:150}} />
+          <img src={logo} style={{width: 120}} />
           <div className="menu-list">
             <ul  className= "menu">
               <li><a href={`${getConfig().LMS_BASE_URL}/dashboard`} style={{color: 'black'}}>Dashboard</a></li>
@@ -95,7 +99,8 @@ function TabPage({ intl, ...props }) {
           <ul className='right-menu'>
             <li><img src={icon_coin_back} /> <span>3</span> </li>
             <li><img src={icon} /> <span>1</span> </li>
-            <li><img src="https://launchpadedx.s3.us-west-1.amazonaws.com/profile.png"style={{width: 100, height:100}} /></li>
+            <li><a href={`${getConfig().LMS_BASE_URL}/u/${username}`} style={{color: 'black'}}><img style={{height: "30px", width: "30px"}}src={profile_icon} /> </a></li>
+
           </ul>
         </div>
         </div>
@@ -104,7 +109,6 @@ function TabPage({ intl, ...props }) {
       </>
     );
   }
-
 
   // courseStatus 'failed' and any other unexpected course status.
   return (
